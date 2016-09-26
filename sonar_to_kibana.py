@@ -34,9 +34,9 @@ if __name__ == '__main__':
     sonar_data = input_json_stream.json()
     resource_by_ids = {}
     for resource in sonar_data:
-        #print(resource)
+        print(resource)
         attribs = {"name": resource["name"], "scope": resource["scope"], "qualifier": resource["qualifier"],
-                        "date": resource["date"],"lang": resource["lang"], "version": resource["version"]}
+                        "date": resource["date"],"creationDate": resource["creationDate"] ,"version": resource["version"],"longName" : resource["lname"],"identity" :resource["key"],"uuid":resource["uuid"]}
         for measurement in resource["msr"]:
             attribs[measurement["key"]] = measurement["val"]
 
@@ -63,7 +63,7 @@ if __name__ == '__main__':
                 previous_metric_names_and_values = metric_names_and_values.copy()
                 metric_date = metrics_per_date["d"]
                 metric_names_and_values["date"] = metric_date
-                for extra_attrib in ["name", "scope", "qualifier", "lang"]: # FIXME: how about "version" How do we know which version a timemachine sample belongs to??
+                for extra_attrib in ["name", "scope", "qualifier"]: # FIXME: how about "version" How do we know which version a timemachine sample belongs to??
                     metric_names_and_values[extra_attrib] = resource_attribs[extra_attrib]
                 print (metric_names_and_values)
-                es.index(index="sonar-metrics", doc_type="metrics", body=metric_names_and_values)
+                es.index(index="sonar-metrics", doc_type="timemachine", body=metric_names_and_values)
